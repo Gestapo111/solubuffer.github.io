@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Ácidos, Bases y Soluciones Buffer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .question p {
+            font-weight: bold;
+        }
+
+        .result {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .correct-answer {
+            color: green;
+        }
+
+        .incorrect-answer {
+            color: red;
+        }
+
+        #timer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: green;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+        }
+
+        #submit-btn {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        #block-message, #completion-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        let timer;
+        let timeLeft = 1500; // 25 minutes in seconds
+        let score = 0;
+        let userCompleted = false;
+
+        function startTimer() {
+            timer = setInterval(function () {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById("timer").textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    document.getElementById("submit-btn").disabled = true;
+                    calculateScore();
+                }
+            }, 1000);
+        }
+
+        function calculateScore() {
+            if (userCompleted) return; // Evitar múltiples intentos
+
+            userCompleted = true; // Marcar como completado
+            score = 0;
+            const correctAnswers = [
+                "pastillas antiacidas",
+                "hidroxido de magnesio",
+                "acido clorhidrico",
+                "rojo celeste verde azul",
+                "el equilibrio quimico",
+                "en mismo estado de agregacion",
+                "heterogeneo",
+                "concentracion",
+                "temperatura",
+                "presion",
+            ];
+
+            const userAnswers = document.querySelectorAll('.answer');
+            userAnswers.forEach((input, index) => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = correctAnswers[index].toLowerCase();
+
+                if (userAnswer === correctAnswer) {
+                    score++;
+                    document.querySelector(`#result${index + 1}`).textContent = "Correcto";
+                    document.querySelector(`#result${index + 1}`).className = "correct-answer";
+                } else {
+                    document.querySelector(`#result${index + 1}`).textContent = "Incorrecto";
+                    document.querySelector(`#result${index + 1}`).className = "incorrect-answer";
+                }
+            });
+
+            const percentage = (score / correctAnswers.length * 10).toFixed(2);
+            document.getElementById("final-score").textContent = `Tu calificación es: ${percentage}/10`;
+            document.getElementById("results").style.display = "block";
+
+            showCompletionMessage(); // Mostrar mensaje final
+            blockAccess(); // Bloquear acceso después de completar
+        }
+
+        function showCompletionMessage() {
+            const fullName = document.getElementById('fullName').value;
+            const nie = document.getElementById('nie').value;
+            const percentage = (score / 10).toFixed(2);
+
+            document.getElementById("completion-message").style.display = "block";
+            document.getElementById("completion-message").textContent = `
+                Nombre: ${fullName}
+                NIE: ${nie}
+                Calificación: ${percentage}/10
+                Laboratorio completado. La MAC del equipo queda bloqueada.
+            `;
+        }
+
+        function blockAccess() {
+            const macAddress = "user-mac-address"; // Simular MAC del usuario
+
+            // Guardar la MAC en localStorage
+            localStorage.setItem("blockedMac", macAddress);
+
+            // Mostrar mensaje de bloqueo
+            document.getElementById("block-message").style.display = "block";
+            document.getElementById("block-message").textContent = "Has completado el cuestionario. Ya no tienes acceso.";
+        }
+
+        function checkBlockedUser() {
+            const macAddress = "user-mac-address"; // Simular MAC del usuario
+            const blockedMac = localStorage.getItem("blockedMac");
+
+            if (blockedMac === macAddress) {
+                // Si el usuario ya completó la evaluación, mostrar el mensaje de bloqueo
+                document.getElementById("block-message").style.display = "block";
+                document.getElementById("block-message").textContent = "No tienes acceso a esta evaluación, ya la completaste.";
+                document.getElementById("quizForm").style.display = "none"; // Ocultar el formulario
+            }
+        }
+
+        window.onload = function () {
+            checkBlockedUser();
+            if (!userCompleted) {
+                startTimer();
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="timer">25:00</div>
+
+    <div class="container">
+        <h1>Evaluación de Ácidos, Bases y Soluciones Buffer</h1>
+
+        <form id="quizForm">
+            <div id="userDetails">
+                <label for="fullName">Nombre completo:</label>
+                <input type="text" id="fullName" name="fullName" required>
+                <label for="nie">NIE:</label>
+                <input type="text" id="nie" name="nie" required>
+            </div>
+
+            <!-- Preguntas del cuestionario -->
+            <div class="question" id="question1">
+                <p>1. ¿Cuándo sufrimos una indigestión estomacal o acidez estomacal solemos tomar?</p>
+                <input type="text" class="answer" required>
+                <div id="result1" class="result"></div>
+            </div>
+
+            <!-- Más preguntas... -->
+
+            <button type="button" id="submit-btn" onclick="calculateScore()">Enviar respuestas</button>
+        </form>
+
+        <div id="results">
+            <p id="final-score"></p>
+        </div>
+    </div>
+
+    <div id="completion-message"></div>
+    <div id="block-message"></div>
+
+</body>
+
+</html>
