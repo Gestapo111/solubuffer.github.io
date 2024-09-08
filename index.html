@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +10,6 @@
             background-color: #f4f4f4;
             padding: 20px;
         }
-
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -20,32 +17,25 @@
             padding: 20px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             text-align: center;
         }
-
         .question {
             margin-bottom: 20px;
         }
-
         .question p {
             font-weight: bold;
         }
-
         .result {
             display: none;
             margin-top: 10px;
         }
-
         .correct-answer {
             color: green;
         }
-
         .incorrect-answer {
             color: red;
         }
-
         #timer {
             position: fixed;
             top: 10px;
@@ -55,7 +45,6 @@
             color: white;
             border-radius: 5px;
         }
-
         #submit-btn {
             margin-top: 20px;
             background-color: #4CAF50;
@@ -64,12 +53,10 @@
             border: none;
             cursor: pointer;
         }
-
         #submit-btn:hover {
             background-color: #45a049;
         }
-
-        #block-message, #completion-message {
+        #block-message {
             display: none;
             position: fixed;
             top: 50%;
@@ -81,8 +68,11 @@
             border-radius: 10px;
             text-align: center;
         }
+        #final-score, #user-info {
+            margin-top: 20px;
+            font-weight: bold;
+        }
     </style>
-
     <script>
         let timer;
         let timeLeft = 1500; // 25 minutes in seconds
@@ -90,7 +80,7 @@
         let userCompleted = false;
 
         function startTimer() {
-            timer = setInterval(function () {
+            timer = setInterval(function() {
                 let minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft % 60;
                 document.getElementById("timer").textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -119,14 +109,14 @@
                 "heterogeneo",
                 "concentracion",
                 "temperatura",
-                "presion",
+                "presion"
             ];
 
             const userAnswers = document.querySelectorAll('.answer');
             userAnswers.forEach((input, index) => {
                 const userAnswer = input.value.trim().toLowerCase();
                 const correctAnswer = correctAnswers[index].toLowerCase();
-
+                
                 if (userAnswer === correctAnswer) {
                     score++;
                     document.querySelector(`#result${index + 1}`).textContent = "Correcto";
@@ -139,24 +129,14 @@
 
             const percentage = (score / correctAnswers.length * 10).toFixed(2);
             document.getElementById("final-score").textContent = `Tu calificación es: ${percentage}/10`;
+
+            // Mostrar información del usuario en una ventana flotante
+            const fullName = document.getElementById("fullName").value;
+            const nie = document.getElementById("nie").value;
+            document.getElementById("user-info").textContent = `Nombre: ${fullName}, NIE: ${nie}, Calificación: ${percentage}/10, Laboratorio completado`;
+
             document.getElementById("results").style.display = "block";
-
-            showCompletionMessage(); // Mostrar mensaje final
             blockAccess(); // Bloquear acceso después de completar
-        }
-
-        function showCompletionMessage() {
-            const fullName = document.getElementById('fullName').value;
-            const nie = document.getElementById('nie').value;
-            const percentage = (score / 10).toFixed(2);
-
-            document.getElementById("completion-message").style.display = "block";
-            document.getElementById("completion-message").textContent = `
-                Nombre: ${fullName}
-                NIE: ${nie}
-                Calificación: ${percentage}/10
-                Laboratorio completado. La MAC del equipo queda bloqueada.
-            `;
         }
 
         function blockAccess() {
@@ -167,7 +147,7 @@
 
             // Mostrar mensaje de bloqueo
             document.getElementById("block-message").style.display = "block";
-            document.getElementById("block-message").textContent = "Has completado el cuestionario. Ya no tienes acceso.";
+            document.getElementById("block-message").textContent = "Has completado el cuestionario. Ya no tienes acceso. MAC bloqueada.";
         }
 
         function checkBlockedUser() {
@@ -182,7 +162,7 @@
             }
         }
 
-        window.onload = function () {
+        window.onload = function() {
             checkBlockedUser();
             if (!userCompleted) {
                 startTimer();
@@ -190,14 +170,13 @@
         }
     </script>
 </head>
-
 <body>
 
     <div id="timer">25:00</div>
 
     <div class="container">
         <h1>Evaluación de Ácidos, Bases y Soluciones Buffer</h1>
-
+        
         <form id="quizForm">
             <div id="userDetails">
                 <label for="fullName">Nombre completo:</label>
@@ -206,26 +185,87 @@
                 <input type="text" id="nie" name="nie" required>
             </div>
 
-            <!-- Preguntas del cuestionario -->
+            <!-- Pregunta 1 -->
             <div class="question" id="question1">
                 <p>1. ¿Cuándo sufrimos una indigestión estomacal o acidez estomacal solemos tomar?</p>
                 <input type="text" class="answer" required>
                 <div id="result1" class="result"></div>
             </div>
 
-            <!-- Más preguntas... -->
+            <!-- Pregunta 2 -->
+            <div class="question" id="question2">
+                <p>2. ¿Las pastillas antiácidas son muy eficaces contra la acidez porque están compuestas de?</p>
+                <input type="text" class="answer" required>
+                <div id="result2" class="result"></div>
+            </div>
 
-            <button type="button" id="submit-btn" onclick="calculateScore()">Enviar respuestas</button>
+            <!-- Pregunta 3 -->
+            <div class="question" id="question3">
+                <p>3. ¿Es el nombre del ácido que está en nuestro estómago y con el cual hace reacción el hidróxido de magnesio?</p>
+                <input type="text" class="answer" required>
+                <div id="result3" class="result"></div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="question" id="question4">
+                <p>4. ¿Cuál es el orden de los colores de la reacción del ácido + base y sal + agua?</p>
+                <input type="text" class="answer" required>
+                <div id="result4" class="result"></div>
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="question" id="question5">
+                <p>5. ¿Es un sistema dinámico y se da cuando la velocidad directa e inversa a temperatura constante?</p>
+                <input type="text" class="answer" required>
+                <div id="result5" class="result"></div>
+            </div>
+
+            <!-- Pregunta 6 -->
+            <div class="question" id="question6">
+                <p>6. ¿En el equilibrio químico homogéneo tanto reactantes como productos se encuentran?</p>
+                <input type="text" class="answer" required>
+                <div id="result6" class="result"></div>
+            </div>
+
+            <!-- Pregunta 7 -->
+            <div class="question" id="question7">
+                <p>7. ¿Los reactantes y los productos se encuentran en diferentes estados de agregación?</p>
+                <input type="text" class="answer" required>
+                <div id="result7" class="result"></div>
+            </div>
+
+            <!-- Pregunta 8 -->
+            <div class="question" id="question8">
+                <p>8. ¿El principio de Le Chatelier predice que el equilibrio de la reacción se desplaza a la derecha o a la izquierda cuando cambia?</p>
+                <input type="text" class="answer" required>
+                <div id="result8" class="result"></div>
+            </div>
+
+            <!-- Pregunta 9 -->
+            <div class="question" id="question9">
+                <p>9. ¿El principio de Le Chatelier predice que el equilibrio de la reacción se desplaza a la derecha o a la izquierda cuando cambia la?</p>
+                <input type="text" class="answer" required>
+                <div id="result9" class="result"></div>
+            </div>
+
+            <!-- Pregunta 10 -->
+            <div class="question" id="question10">
+                <p>10. ¿El principio de Le Chatelier predice que el equilibrio de la reacción se desplaza a la derecha o a la izquierda cuando cambia la?</p>
+                <input type="text" class="answer" required>
+                <div id="result10" class="result"></div>
+            </div>
+
+            <button type="button" id="submit-btn" onclick="calculateScore()">Obtener Calificación</button>
         </form>
 
-        <div id="results">
-            <p id="final-score"></p>
+        <div id="results" style="display:none;">
+            <div id="final-score"></div>
+            <div id="user-info"></div>
         </div>
+
     </div>
 
-    <div id="completion-message"></div>
     <div id="block-message"></div>
 
 </body>
-
 </html>
